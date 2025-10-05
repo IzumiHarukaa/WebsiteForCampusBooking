@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Principal Dashboard</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/style.css}" />
+</head>
+<body>
+    <div class="container">
+         <div class="flex-container">
+            <h1>Principal's Dashboard</h1>
+            <form th:action="@{/logout}" method="post" style="display: inline;"><button type="submit" class="btn btn-reject">Logout</button></form>
+        </div>
+        <div class="card">
+            <h2>Pending Your Approval</h2>
+             <table class="styled-table">
+                <thead>
+                    <tr>
+                        <th>ID</th><th>Event</th><th>Applicant</th><th>Facility</th><th>Date</th><th style="width: 40%;">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="booking : ${bookings}">
+                        <td th:text="${booking.bookingId}"></td>
+                        <td th:text="${booking.eventName}"></td>
+                        <td th:text="${booking.user?.name}"></td>
+                        <td th:text="${booking.facility?.name}"></td>
+                        <!-- Displaying the date in YYYY-MM-DD format -->
+                        <td th:text="${booking.date}"></td>
+                        <td>
+                            <form th:action="@{'/bookings/' + ${booking.bookingId} + '/process'}" method="post" class="form-actions">
+                                 <input type="hidden" name="approverRole" th:value="${role}" />
+                                 <input type="hidden" name="approverName" th:value="${username}" />
+                                 <input type="text" name="remark" placeholder="Optional remark" class="form-control" style="width: 150px;"/>
+                                 <button type="submit" name="decision" value="approve" class="btn btn-approve">Approve</button>
+                                 <button type="submit" name="decision" value="reject" class="btn btn-reject">Reject</button>
+                            </form>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(bookings)}">
+                        <td colspan="6" style="text-align: center;">No booking requests are currently pending your approval.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>
+

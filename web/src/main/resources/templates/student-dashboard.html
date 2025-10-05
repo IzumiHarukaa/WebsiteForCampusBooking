@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Student Dashboard</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/style.css}" />
+</head>
+<body>
+    <div class="container">
+         <div class="flex-container">
+            <h1>Welcome, <span th:text="${username}">Student</span>!</h1>
+            <div>
+                <a th:href="@{/bookings/new}" class="btn btn-primary">New Booking Request</a>
+                <!-- Corrected logout button for proper security handling -->
+                <form th:action="@{/logout}" method="post" style="display: inline;">
+                    <button type="submit" class="btn btn-reject">Logout</button>
+                </form>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2>My Booking Requests</h2>
+             <table class="styled-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Event</th>
+                        <th>Facility</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                        <th>Remarks</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="booking : ${bookings}">
+                        <td th:text="${booking.bookingId}">EVT001</td>
+                        <td th:text="${booking.eventName}">Tech Fest</td>
+                        <td th:text="${booking.facility?.name}">Auditorium</td>
+                        <!-- FIX: Safely format the date and handle potential null values -->
+                        <td th:text="${booking.date != null ? #temporals.format(booking.date, 'dd/MM/yy') : 'N/A'}">dd/MM/yy</td>
+                        <td>
+                            <span class="status-badge"
+                                th:text="${#strings.replace(booking.status.name(), '_', ' ')}"
+                                th:classappend="${#strings.contains(booking.status.name(), 'PENDING')} ? 'status-pending' : (${booking.status.name() == 'APPROVED'} ? 'status-approved' : 'status-rejected')">
+                            </span>
+                        </td>
+                         <td th:text="${booking.remarks}">Awaiting review.</td>
+                    </tr>
+                     <tr th:if="${#lists.isEmpty(bookings)}">
+                        <td colspan="6" style="text-align: center;">You have not made any booking requests yet.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>
+
