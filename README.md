@@ -67,7 +67,7 @@ Access: Open your web browser and navigate to http://localhost:8080.
 5. Contributors & Acknowledgements
 This project was a collaborative effort.
 
-Team Members:
+Team Members(Mains):
 
 Sreedhar
 
