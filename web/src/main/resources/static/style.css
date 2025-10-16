@@ -1,11 +1,11 @@
-/* --- BRIGHT PROFESSIONAL THEME --- */
+/* --- MODERN VIBRANT THEME --- */
 
 /* General Body Styles */
 body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    /* Bright, clean background */
-    background: linear-gradient(135deg, #F0F4F8 0%, #E2E8F0 100%);
-    color: #1A202C;
+    /* Vibrant gradient background */
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+    color: #2D3748;
     margin: 0;
     padding: 2rem;
     min-height: 100vh;
@@ -22,14 +22,15 @@ body {
 h1 {
     font-size: 2.5rem;
     font-weight: bold;
-    color: #1A202C;
+    color: #FFFFFF;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 h2 {
     font-size: 1.75rem;
     font-weight: 600;
-    color: #2D3748;
-    border-bottom: 3px solid #4299E1;
+    color: #1A202C;
+    border-bottom: 3px solid #FF6B9D;
     padding-bottom: 0.5rem;
     margin-top: 2rem;
     margin-bottom: 1.5rem;
@@ -37,11 +38,11 @@ h2 {
 
 /* Card for grouping content */
 .card {
-    background-color: #FFFFFF;
-    backdrop-filter: blur(10px);
-    border: 1px solid #E2E8F0;
-    border-radius: 16px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    background-color: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 20px;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
     padding: 1.5rem 2rem;
     margin-bottom: 2rem;
 }
@@ -66,13 +67,13 @@ h2 {
 }
 
 .register-link a {
-    color: #3182CE;
+    color: #667eea;
     text-decoration: none;
     font-weight: 600;
     transition: color 0.3s;
 }
 .register-link a:hover {
-    color: #2C5AA0;
+    color: #764ba2;
 }
 
 /* Table Styles */
@@ -83,7 +84,7 @@ h2 {
 }
 
 .styled-table thead tr {
-    background: linear-gradient(90deg, #4299E1, #3182CE);
+    background: linear-gradient(90deg, #FF6B9D, #C471F5);
     color: #ffffff;
     text-align: left;
 }
@@ -100,15 +101,17 @@ h2 {
 }
 
 .styled-table tbody tr:nth-of-type(even) {
-    background-color: #F7FAFC;
+    background-color: #FAF5FF;
 }
 
 .styled-table tbody tr:hover {
-    background-color: #EDF2F7;
+    background-color: #FFF5F7;
+    transform: scale(1.01);
+    transition: all 0.2s;
 }
 
 .styled-table tbody tr:last-of-type {
-    border-bottom: 2px solid #4299E1;
+    border-bottom: 2px solid #FF6B9D;
 }
 
 /* Form Styles */
@@ -128,25 +131,26 @@ h2 {
     width: 100%;
     padding: 0.75rem;
     background-color: #FFFFFF;
-    border: 2px solid #CBD5E0;
-    border-radius: 8px;
+    border: 2px solid #E9D5FF;
+    border-radius: 12px;
     font-size: 1rem;
     color: #1A202C;
     box-sizing: border-box;
-    transition: border-color 0.3s, box-shadow 0.3s;
+    transition: border-color 0.3s, box-shadow 0.3s, transform 0.2s;
 }
 
 .form-control:focus {
-    border-color: #4299E1;
-    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.15);
+    border-color: #C471F5;
+    box-shadow: 0 0 0 4px rgba(196, 113, 245, 0.2);
     outline: none;
+    transform: translateY(-1px);
 }
 
 /* Button Styles */
 .btn {
     padding: 0.75rem 1.5rem;
     border: none;
-    border-radius: 8px;
+    border-radius: 12px;
     font-size: 1rem;
     font-weight: 600;
     color: white;
@@ -157,37 +161,41 @@ h2 {
     text-align: center;
 }
 .btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
 }
 
-/* Bright, vibrant button colors */
+.btn:active {
+    transform: translateY(-1px) scale(0.99);
+}
+
+/* Vibrant button colors */
 .btn-primary { 
-    background: linear-gradient(135deg, #4299E1, #3182CE);
+    background: linear-gradient(135deg, #667eea, #764ba2);
 }
 .btn-primary:hover { 
-    background: linear-gradient(135deg, #3182CE, #2C5AA0);
+    background: linear-gradient(135deg, #5568d3, #663d8f);
 }
 
 .btn-secondary { 
-    background: linear-gradient(135deg, #718096, #4A5568);
+    background: linear-gradient(135deg, #A0AEC0, #718096);
 }
 .btn-secondary:hover { 
-    background: linear-gradient(135deg, #4A5568, #2D3748);
+    background: linear-gradient(135deg, #718096, #4A5568);
 }
 
 .btn-approve { 
-    background: linear-gradient(135deg, #48BB78, #38A169);
+    background: linear-gradient(135deg, #10B981, #059669);
 } 
 .btn-approve:hover { 
-    background: linear-gradient(135deg, #38A169, #2F855A);
+    background: linear-gradient(135deg, #059669, #047857);
 }
 
 .btn-reject { 
-    background: linear-gradient(135deg, #F56565, #E53E3E);
+    background: linear-gradient(135deg, #FF6B9D, #F43F5E);
 }
 .btn-reject:hover { 
-    background: linear-gradient(135deg, #E53E3E, #C53030);
+    background: linear-gradient(135deg, #F43F5E, #E11D48);
 }
 
 /* Flexbox utility */
@@ -208,19 +216,20 @@ h2 {
 .alert {
     padding: 1rem;
     margin-bottom: 1rem;
-    border: 1px solid transparent;
-    border-radius: .5rem;
+    border: 2px solid transparent;
+    border-radius: 12px;
     text-align: center;
+    font-weight: 500;
 }
 .alert-danger {
-    color: #C53030;
-    background-color: #FFF5F5;
-    border-color: #FEB2B2;
+    color: #991B1B;
+    background-color: #FEE2E2;
+    border-color: #FECACA;
 }
 .alert-success {
-    color: #2F855A;
-    background-color: #F0FFF4;
-    border-color: #9AE6B4;
+    color: #065F46;
+    background-color: #D1FAE5;
+    border-color: #A7F3D0;
 }
 
 /* Copyright Footer */
@@ -229,6 +238,7 @@ h2 {
     bottom: 10px;
     right: 15px;
     font-size: 0.8em;
-    color: #718096;
-    opacity: 0.6;
+    color: #FFFFFF;
+    opacity: 0.7;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
 }
