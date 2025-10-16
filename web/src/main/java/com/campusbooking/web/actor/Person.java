@@ -1,12 +1,18 @@
 package com.campusbooking.web.actor;
 
+import com.campusbooking.web.model.Booking;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
+import jakarta.persistence.OneToMany;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
@@ -16,7 +22,6 @@ public abstract class Person {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    // We will now use 'name' as the unique username
     @Column(unique = true, nullable = false)
     protected String name; 
     
@@ -25,6 +30,11 @@ public abstract class Person {
 
     @Column(nullable = false)
     protected String role;
+
+    // FIX: Added a list of bookings.
+    // CascadeType.ALL ensures that when a Person is deleted, all their Bookings are deleted too.
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<Booking> bookings = new ArrayList<>();
 
     // Constructors
     public Person() {}
@@ -44,4 +54,7 @@ public abstract class Person {
     public void setPassword(String password) { this.password = password; }
     public String getRole() { return role; }
     public void setRole(String role) { this.role = role; }
+    public List<Booking> getBookings() { return bookings; }
+    public void setBookings(List<Booking> bookings) { this.bookings = bookings; }
 }
+

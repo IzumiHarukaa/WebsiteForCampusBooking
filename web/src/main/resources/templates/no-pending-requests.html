@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>No Pending Requests</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/style.css}" />
+</head>
+<body>
+    <div class="login-container">
+        <div class="card" style="text-align: center;">
+            <h1 style="font-size: 2rem;">No Pending Requests</h1>
+            <p style="margin: 2rem 0; font-size: 1.1rem; color: #ccc;">
+                There are currently no booking requests that require your approval.
+            </p>
+            <form th:action="@{/logout}" method="post">
+                <button type="submit" class="btn btn-primary">Logout</button>
+            </form>
+        </div>
+    </div>
+    <footer class="copyright-footer">Created by Mains</footer>
+</body>
+</html>

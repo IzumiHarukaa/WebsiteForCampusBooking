@@ -9,24 +9,35 @@
     <div class="container">
          <div class="flex-container">
             <h1>HOD Dashboard</h1>
-            <form th:action="@{/logout}" method="post" style="display: inline;"><button type="submit" class="btn btn-reject">Logout</button></form>
+            <div>
+                <form th:action="@{/logout}" method="post" style="display: inline;">
+                    <button type="submit" class="btn btn-reject">Logout</button>
+                </form>
+            </div>
         </div>
+        
         <div class="card">
             <h2>Pending Your Approval</h2>
              <table class="styled-table">
                 <thead>
                     <tr>
-                        <th>ID</th><th>Event</th><th>Applicant</th><th>Facility</th><th>Date</th><th style="width: 40%;">Action</th>
+                        <th>ID</th>
+                        <th>Event</th>
+                        <th class="description-col">Description</th>
+                        <th>Applicant</th>
+                        <th>Facility</th>
+                        <th>Date</th>
+                        <th style="width: 40%;">Action</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr th:each="booking : ${bookings}">
                         <td th:text="${booking.bookingId}"></td>
                         <td th:text="${booking.eventName}"></td>
+                        <td th:text="${booking.eventDescription}"></td>
                         <td th:text="${booking.user?.name}"></td>
                         <td th:text="${booking.facility?.name}"></td>
-                        <!-- FIX: Temporarily simplified date display to prevent error -->
-                        <td th:text="${booking.date}"></td>
+                        <td th:text="${booking.date != null ? #temporals.format(booking.date, 'dd/MM/yy') : 'N/A'}"></td>
                         <td>
                             <form th:action="@{'/bookings/' + ${booking.bookingId} + '/process'}" method="post" class="form-actions">
                                  <input type="hidden" name="approverRole" th:value="${role}" />
@@ -37,13 +48,14 @@
                             </form>
                         </td>
                     </tr>
-                    <tr th:if="${#lists.isEmpty(bookings)}">
-                        <td colspan="6" style="text-align: center;">No booking requests are currently pending your approval.</td>
+                     <tr th:if="${#lists.isEmpty(bookings)}">
+                        <td colspan="7" style="text-align: center;">No booking requests are currently pending your approval.</td>
                     </tr>
                 </tbody>
             </table>
         </div>
     </div>
+    <footer class="copyright-footer">Created by Mains</footer>
 </body>
 </html>
 

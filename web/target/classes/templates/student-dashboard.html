@@ -11,7 +11,6 @@
             <h1>Welcome, <span th:text="${username}">Student</span>!</h1>
             <div>
                 <a th:href="@{/bookings/new}" class="btn btn-primary">New Booking Request</a>
-                <!-- Corrected logout button for proper security handling -->
                 <form th:action="@{/logout}" method="post" style="display: inline;">
                     <button type="submit" class="btn btn-reject">Logout</button>
                 </form>
@@ -25,6 +24,8 @@
                     <tr>
                         <th>ID</th>
                         <th>Event</th>
+                        <!-- NEW COLUMN -->
+                        <th class="description-col">Description</th>
                         <th>Facility</th>
                         <th>Date</th>
                         <th>Status</th>
@@ -33,26 +34,28 @@
                 </thead>
                 <tbody>
                     <tr th:each="booking : ${bookings}">
-                        <td th:text="${booking.bookingId}">EVT001</td>
-                        <td th:text="${booking.eventName}">Tech Fest</td>
-                        <td th:text="${booking.facility?.name}">Auditorium</td>
-                        <!-- FIX: Safely format the date and handle potential null values -->
-                        <td th:text="${booking.date != null ? #temporals.format(booking.date, 'dd/MM/yy') : 'N/A'}">dd/MM/yy</td>
+                        <td th:text="${booking.bookingId}"></td>
+                        <td th:text="${booking.eventName}"></td>
+                        <!-- NEW COLUMN DATA -->
+                        <td th:text="${booking.eventDescription}"></td>
+                        <td th:text="${booking.facility?.name}"></td>
+                        <td th:text="${booking.date != null ? #temporals.format(booking.date, 'dd/MM/yy') : 'N/A'}"></td>
                         <td>
                             <span class="status-badge"
                                 th:text="${#strings.replace(booking.status.name(), '_', ' ')}"
                                 th:classappend="${#strings.contains(booking.status.name(), 'PENDING')} ? 'status-pending' : (${booking.status.name() == 'APPROVED'} ? 'status-approved' : 'status-rejected')">
                             </span>
                         </td>
-                         <td th:text="${booking.remarks}">Awaiting review.</td>
+                         <td th:text="${booking.remarks}"></td>
                     </tr>
                      <tr th:if="${#lists.isEmpty(bookings)}">
-                        <td colspan="6" style="text-align: center;">You have not made any booking requests yet.</td>
+                        <td colspan="7" style="text-align: center;">You have not made any booking requests yet.</td>
                     </tr>
                 </tbody>
             </table>
         </div>
     </div>
+    <footer class="copyright-footer">Created by Mains</footer>
 </body>
 </html>
 

@@ -200,4 +200,15 @@ h2 {
     background-color: #155724;
     border-color: #c3e6cb;
 }
-
+.description-col {
+    width: 25%; /* Give the description column a bit more space */
+    min-width: 200px;
+}
+/* --- NEW STYLE FOR COPYRIGHT FOOTER --- */
+.copyright-footer {
+    position: fixed;
+    bottom: 10px;
+    right: 15px;
+    font-size: 0.8em;
+    color: #555; /* A subtle dark grey */
+}
