@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <title>New Booking Request</title>
     <link rel="stylesheet" type="text/css" th:href="@{/style.css}" />
-    <!-- Including Pikaday for a better date picker -->
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/pikaday/css/pikaday.css">
 </head>
 <body>
@@ -40,8 +39,31 @@
                     </div>
                     <div class="form-group">
                         <label for="facility.type">Facility Type</label>
-                        <!-- FIX: Removed the 'readonly' attribute to make this field editable -->
                         <input type="text" th:field="*{facility.type}" placeholder="e.g., Auditorium, Lab, Hall" class="form-control"/>
+                    </div>
+                </div>
+                
+                <!-- FIX: Changed th:field to name attribute for simpler form submission -->
+                <div class="form-grid" style="margin-top: 1rem;">
+                    <div class="form-group">
+                        <label for="assignedStaffAdvisorId">Select Staff Advisor</label>
+                        <select name="assignedStaffAdvisorId" id="assignedStaffAdvisorId" class="form-control" required>
+                            <option value="">-- Select an Advisor --</option>
+                            <option th:each="approver : ${approvers}"
+                                    th:if="${approver.role == 'ROLE_STAFF_ADVISOR'}"
+                                    th:value="${approver.id}"
+                                    th:text="${approver.name + ' (Advisor)'}"></option>
+                        </select>
+                    </div>
+                     <div class="form-group">
+                        <label for="assignedHodId">Select HOD</label>
+                        <select name="assignedHodId" id="assignedHodId" class="form-control" required>
+                            <option value="">-- Select an HOD --</option>
+                            <option th:each="approver : ${approvers}"
+                                    th:if="${approver.role == 'ROLE_HOD'}"
+                                    th:value="${approver.id}"
+                                    th:text="${approver.name + ' (HOD)'}"></option>
+                        </select>
                     </div>
                 </div>
 
@@ -60,7 +82,6 @@
         </div>
     </div>
     
-    <!-- JavaScript for the date picker -->
     <script src="https://cdn.jsdelivr.net/npm/moment/moment.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/pikaday/pikaday.js"></script>
     <script>
@@ -69,6 +90,7 @@
             format: 'DD/MM/YY',
         });
     </script>
+    <footer class="copyright-footer">Created by Mains</footer>
 </body>
 </html>
 

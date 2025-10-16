@@ -1,8 +1,10 @@
 package com.campusbooking.web.controller;
 
+import com.campusbooking.web.actor.Person;
 import com.campusbooking.web.model.Booking;
 import com.campusbooking.web.model.Status;
 import com.campusbooking.web.repository.BookingRepository;
+import com.campusbooking.web.repository.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -20,9 +22,11 @@ public class DashboardController {
     @Autowired
     private BookingRepository bookingRepository;
 
+    @Autowired
+    private PersonRepository personRepository; // Used to find the currently logged-in approver
+
     /**
-     * Displays the dashboard for a logged-in student.
-     * It fetches only the booking requests created by that specific student.
+     * Displays the dashboard for a logged-in student, showing only their requests.
      */
     @GetMapping("/student/dashboard")
     public String studentDashboard(Model model, Principal principal) {
@@ -34,41 +38,61 @@ public class DashboardController {
 
     /**
      * Displays the dashboard for the Staff Advisor.
-     * It fetches only booking requests with the status PENDING_STAFF_APPROVAL.
+     * It fetches only booking requests assigned to this specific advisor.
      */
     @GetMapping("/staff-advisor/dashboard")
     public String staffAdvisorDashboard(Model model, Authentication authentication) {
-        prepareApproverModel(model, authentication, Status.PENDING_STAFF_APPROVAL, "Staff Advisor");
+        // Find the Person object for the currently logged-in user
+        Person currentUser = personRepository.findByName(authentication.getName()).orElse(null);
+        if (currentUser != null) {
+            // Fetch only the bookings assigned to this advisor with the correct pending status
+            List<Booking> pendingBookings = bookingRepository.findByAssignedStaffAdvisorAndStatus(currentUser, Status.PENDING_STAFF_APPROVAL);
+            model.addAttribute("bookings", pendingBookings);
+        }
+        model.addAttribute("username", authentication.getName());
+        model.addAttribute("role", "Staff Advisor");
         return "staff-advisor-dashboard";
     }
 
     /**
      * Displays the dashboard for the HOD.
-     * It fetches only booking requests with the status PENDING_HOD_APPROVAL.
+     * It fetches only booking requests assigned to this specific HOD.
      */
     @GetMapping("/hod/dashboard")
     public String hodDashboard(Model model, Authentication authentication) {
-        prepareApproverModel(model, authentication, Status.PENDING_HOD_APPROVAL, "HOD");
+        Person currentUser = personRepository.findByName(authentication.getName()).orElse(null);
+        if (currentUser != null) {
+            List<Booking> pendingBookings = bookingRepository.findByAssignedHodAndStatus(currentUser, Status.PENDING_HOD_APPROVAL);
+            model.addAttribute("bookings", pendingBookings);
+        }
+        model.addAttribute("username", authentication.getName());
+        model.addAttribute("role", "HOD");
         return "hod-dashboard";
     }
 
     /**
      * Displays the dashboard for the Dean.
-     * It fetches only booking requests with the status PENDING_DEAN_APPROVAL.
+     * The Dean sees all requests pending their approval.
      */
     @GetMapping("/dean/dashboard")
     public String deanDashboard(Model model, Authentication authentication) {
-        prepareApproverModel(model, authentication, Status.PENDING_DEAN_APPROVAL, "Dean");
+        List<Booking> pendingBookings = bookingRepository.findByStatus(Status.PENDING_DEAN_APPROVAL);
+        model.addAttribute("bookings", pendingBookings);
+        model.addAttribute("username", authentication.getName());
+        model.addAttribute("role", "Dean");
         return "dean-dashboard";
     }
 
     /**
      * Displays the dashboard for the Principal.
-     * It fetches only booking requests with the status PENDING_PRINCIPAL_APPROVAL.
+     * The Principal sees all requests pending their approval.
      */
     @GetMapping("/principal/dashboard")
     public String principalDashboard(Model model, Authentication authentication) {
-        prepareApproverModel(model, authentication, Status.PENDING_PRINCIPAL_APPROVAL, "Principal");
+        List<Booking> pendingBookings = bookingRepository.findByStatus(Status.PENDING_PRINCIPAL_APPROVAL);
+        model.addAttribute("bookings", pendingBookings);
+        model.addAttribute("username", authentication.getName());
+        model.addAttribute("role", "Principal");
         return "principal-dashboard";
     }
 
@@ -78,17 +102,6 @@ public class DashboardController {
     @GetMapping("/no-pending-requests")
     public String noPendingRequests() {
         return "no-pending-requests";
-    }
-    
-    /**
-     * A private helper method to reduce code duplication. It prepares the data needed
-     * for all approver dashboards.
-     */
-    private void prepareApproverModel(Model model, Authentication authentication, Status requiredStatus, String roleName) {
-        List<Booking> pendingBookings = bookingRepository.findByStatus(requiredStatus);
-        model.addAttribute("bookings", pendingBookings);
-        model.addAttribute("username", authentication.getName());
-        model.addAttribute("role", roleName);
     }
 }
 
