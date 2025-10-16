@@ -35,11 +35,10 @@
             <artifactId>spring-boot-starter-thymeleaf</artifactId>
         </dependency>
 
-        <!-- THIS IS THE CRITICAL DEPENDENCY FOR DATE FORMATTING -->
+        <!-- Dependency for Java 8+ Date/Time formatting in Thymeleaf -->
         <dependency>
             <groupId>org.thymeleaf.extras</groupId>
             <artifactId>thymeleaf-extras-java8time</artifactId>
-            <!-- FIX: The missing version tag has been added. This was the cause of the error. -->
             <version>3.0.4.RELEASE</version>
         </dependency>
 
@@ -47,6 +46,12 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+
+        <!-- FIX: This is the critical dependency for Thymeleaf + Spring Security integration -->
+        <dependency>
+            <groupId>org.thymeleaf.extras</groupId>
+            <artifactId>thymeleaf-extras-springsecurity6</artifactId>
         </dependency>
 
         <!-- MySQL Database Driver -->

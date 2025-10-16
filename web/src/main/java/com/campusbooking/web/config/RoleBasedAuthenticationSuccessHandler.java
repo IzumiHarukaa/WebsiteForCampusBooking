@@ -40,6 +40,9 @@ public class RoleBasedAuthenticationSuccessHandler implements AuthenticationSucc
             case "ROLE_STUDENT":
                 redirectUrl = "/student/dashboard";
                 break;
+            case "ROLE_SUPER_USER":
+                redirectUrl = "/super-user/dashboard";
+                break;
             case "ROLE_STAFF_ADVISOR":
                 // Check if there are any bookings with the status PENDING_STAFF_APPROVAL.
                 // If the list is empty, redirect to the "no requests" page; otherwise, go to the dashboard.
