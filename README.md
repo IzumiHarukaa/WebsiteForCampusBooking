@@ -97,7 +97,7 @@ We are aggressively expanding the application's capabilities to establish it as 
 
 ---
 # Made by:
-Sreedhar Raj Kannal
-Sivapriyan R S
-Karthik Nair
+* Sreedhar Raj Kannal
+* Sivapriyan R S
+* Karthik Nair
 *Architected and engineered for excellence.*
