@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Submit a new campus event booking request">
+    <title>New Event Application</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/style.css}" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/pikaday/css/pikaday.css">
+    <style>
+        .pika-single { filter: invert(0.9) hue-rotate(180deg); }
+    </style>
+</head>
+<body>
+    <header class="app-header">
+        <div class="header-inner">
+            <span class="brand">Campus Booking</span>
+            <a th:href="@{/student/dashboard}" class="btn btn-secondary">Back to Dashboard</a>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="card" style="max-width: 850px; margin: 0 auto;">
+            <h1>New Event Application</h1>
+            <p style="color: var(--text-secondary); margin-bottom: 2rem;">Please fill out the details for your event request. All fields are required unless specified.</p>
+
+            <form th:action="@{/bookings}" th:object="${booking}" method="post">
+
+                <div th:if="${param.error}" class="alert alert-danger" style="margin-bottom: 1.5rem;">
+                    <span th:text="${param.error}">Error message</span>
+                </div>
+
+                <div th:if="${param.success}" class="alert alert-success" style="margin-bottom: 1.5rem;">
+                    <span th:text="${param.success}">Success message</span>
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="bookingId">Booking ID</label>
+                        <input type="text" th:field="*{bookingId}" placeholder="e.g., EVT-CSE-01" class="form-control" required/>
+                    </div>
+                    <div class="form-group">
+                        <label for="eventName">Event Name</label>
+                        <input type="text" th:field="*{eventName}" placeholder="Annual Tech Fest" class="form-control" required/>
+                    </div>
+                     <div class="form-group">
+                        <label for="date">Date of Event</label>
+                        <input type="text" id="datepicker" th:field="*{date}" placeholder="Select a date" class="form-control" required autocomplete="off"/>
+                    </div>
+                    <div class="form-group">
+                        <label for="timeSlot">Time Slot</label>
+                        <input type="text" th:field="*{timeSlot}" placeholder="e.g., 14:00 - 16:00" class="form-control" required/>
+                    </div>
+                    <div class="form-group">
+                        <label for="facility.name">Venue / Facility</label>
+                        <input type="text" th:field="*{facility.name}" placeholder="e.g., Main Auditorium" class="form-control" required/>
+                    </div>
+                    <div class="form-group">
+                        <label for="facility.type">Facility Type <span style="opacity: 0.5;">(optional)</span></label>
+                        <input type="text" th:field="*{facility.type}" placeholder="e.g., Auditorium, Lab, Hall" class="form-control"/>
+                    </div>
+                </div>
+
+                <div class="form-group" style="margin-top: 1.5rem;">
+                    <label for="eventDescription">Brief Description of Event</label>
+                    <textarea th:field="*{eventDescription}" rows="4" placeholder="What is the purpose of this event?" class="form-control" style="resize: vertical;"></textarea>
+                </div>
+
+                <div style="display: flex; align-items: center; gap: 0.75rem; margin: 2rem 0; padding: 1.25rem; background: rgba(255,255,255,0.02); border-radius: 8px; border: 1px solid var(--border-color);">
+                    <input type="checkbox" th:field="*{paSystemRequired}" id="paSystemRequired" style="width: 1.15rem; height: 1.15rem; accent-color: var(--accent-color);"/>
+                    <label for="paSystemRequired" style="margin: 0; cursor: pointer; color: var(--text-primary); font-weight: 500;">Public Address (PA) System Required?</label>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.85rem; font-size: 1.05rem;">Submit Application</button>
+            </form>
+        </div>
+    </main>
+    
+    <footer class="copyright-footer">
+        &copy; 2026 Campus Booking System
+    </footer>
+    
+    <script src="https://cdn.jsdelivr.net/npm/moment/moment.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/pikaday/pikaday.js"></script>
+    <script>
+        var picker = new Pikaday({
+            field: document.getElementById('datepicker'),
+            format: 'DD/MM/YY',
+            minDate: new Date()
+        });
+    </script>
+</body>
+</html>
