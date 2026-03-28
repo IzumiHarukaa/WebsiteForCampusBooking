@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Reset - Campus Booking</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/style.css}" />
+</head>
+<body>
+    <header class="app-header">
+        <div class="header-inner">
+            <span class="brand">Campus Booking — Admin Reset</span>
+        </div>
+    </header>
+    <main class="container" style="display: flex; justify-content: center; align-items: center; min-height: 60vh;">
+        <div class="card" style="text-align: center; max-width: 560px; width: 100%;">
+            
+            <div th:if="${param.success}" class="alert" style="background: rgba(63, 185, 80, 0.15); border: 1px solid rgba(63, 185, 80, 0.4); color: #3fb950; border-radius: 8px; padding: 1rem; margin-bottom: 1.5rem;">
+                ✅ All data deleted successfully! Re-register users below.
+                <br><br>
+                <a th:href="@{/register}" class="btn btn-primary" style="text-decoration: none;">Go to Register</a>
+            </div>
+
+            <div th:unless="${param.success}">
+                <div style="font-size: 3rem; margin-bottom: 1rem;">⚠️</div>
+                <h1 style="color: #e44c65; font-size: 1.8rem; margin-bottom: 0.75rem;">Reset All Data</h1>
+                <p style="color: var(--text-secondary); margin-bottom: 2rem; line-height: 1.6;">
+                    This will permanently delete <strong style="color: #fff;">all users, bookings, and approval history</strong> from the database.
+                    This action cannot be undone.
+                </p>
+                <form th:action="@{/admin/reset}" method="post">
+                    <button type="submit" class="btn" style="background: #e44c65; color: white; width: 100%; padding: 0.85rem; font-size: 1rem; border-radius: 8px; border: none; cursor: pointer;">
+                        🗑️  Delete All Users &amp; Bookings
+                    </button>
+                </form>
+                <p style="margin-top: 1.5rem; font-size: 0.85rem; color: var(--text-secondary);">
+                    After reset, re-register users at <a th:href="@{/register}" style="color: var(--accent-color);">/register</a>
+                </p>
+            </div>
+        </div>
+    </main>
+    <footer class="copyright-footer">&copy; 2026 Campus Booking System</footer>
+</body>
+</html>

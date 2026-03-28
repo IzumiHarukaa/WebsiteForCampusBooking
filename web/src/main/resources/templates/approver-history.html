@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="View historical approved booking requests">
+    <title>Booking Approval History</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/style.css}" />
+</head>
+<body>
+    <header class="app-header">
+        <div class="header-inner">
+            <span class="brand">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                Campus Booking
+            </span>
+            <div style="display: flex; gap: 1rem; align-items: center;">
+                <span class="status-badge status-approved">History Log</span>
+                <span style="color: var(--text-secondary); font-size: 0.9rem;">Approver, <strong th:text="${username}" style="color: #fff;">User</strong></span>
+                <a th:href="@{/}" class="btn btn-secondary" style="padding: 0.4rem 0.8rem; text-decoration: none;">Dashboard</a>
+                <form th:action="@{/logout}" method="post" style="margin: 0;">
+                    <button type="submit" class="btn btn-secondary" style="padding: 0.4rem 0.8rem;">Logout</button>
+                </form>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="flex-container">
+            <div>
+                <h1>Approval History</h1>
+                <p style="color: var(--text-secondary);">Historical snapshots of all bookings you have finalized.</p>
+            </div>
+        </div>
+        
+        <div class="card" style="padding: 1.5rem;">
+            <div class="table-responsive">
+                <table class="styled-table">
+                    <thead>
+                        <tr>
+                            <th>Snapshot ID</th>
+                            <th>Original ID</th>
+                            <th>Event</th>
+                            <th>Applicant</th>
+                            <th>Facility</th>
+                            <th>Event Date</th>
+                            <th>Approval Time</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="history : ${historyList}">
+                            <td th:text="${history.historyId}" style="font-weight: 500; color: var(--text-secondary);"></td>
+                            <td th:text="${history.originalBookingId}" style="color: var(--accent-color);"></td>
+                            <td>
+                                <div style="font-weight: 500;" th:text="${history.eventName}"></div>
+                                <div style="font-size: 0.8rem; color: var(--text-secondary);" th:text="${history.eventDescription}"></div>
+                            </td>
+                            <td th:text="${history.userName}"></td>
+                            <td th:text="${history.facilityName}"></td>
+                            <td th:text="${history.date != null ? #temporals.format(history.date, 'dd/MM/yy') : 'N/A'}"></td>
+                            <td th:text="${history.approvalTimestamp != null ? #temporals.format(history.approvalTimestamp, 'dd/MM/yy HH:mm') : 'N/A'}"></td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(historyList)}">
+                            <td colspan="7" style="text-align: center; padding: 4rem; color: var(--text-secondary);">
+                                <div style="font-size: 2.5rem; margin-bottom: 1rem; opacity: 0.3;">🗄️</div>
+                                You have not finalized any approvals yet.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+    <footer class="copyright-footer">
+        &copy; 2026 Campus Booking System
+    </footer>
+</body>
+</html>
