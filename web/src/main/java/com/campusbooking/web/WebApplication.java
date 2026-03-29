@@ -10,7 +10,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 // 'com.campusbooking.web', we don't need to specify them manually.
 @SpringBootApplication
 @EnableJpaRepositories(basePackages = "com.campusbooking.web.repository")
-@EntityScan(basePackages = {"com.campusbooking.web.model", "com.campusbooking.web.actor"})
+@EntityScan(basePackages = { "com.campusbooking.web.model", "com.campusbooking.web.actor" })
 public class WebApplication {
 
     public static void main(String[] args) {
@@ -18,4 +18,3 @@ public class WebApplication {
     }
 
 }
-

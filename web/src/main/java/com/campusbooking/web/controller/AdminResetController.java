@@ -34,7 +34,8 @@ public class AdminResetController {
 
     /**
      * Deletes all history, bookings, and users from the database.
-     * Then redirects to login so the DataSeeder can seed fresh default users on next startup.
+     * Then redirects to login so the DataSeeder can seed fresh default users on
+     * next startup.
      */
     @PostMapping("/admin/reset")
     public String performReset() {

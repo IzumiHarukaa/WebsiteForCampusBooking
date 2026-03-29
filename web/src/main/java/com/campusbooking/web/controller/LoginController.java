@@ -16,7 +16,9 @@ public class LoginController {
     }
 
     /**
-     * This method handles GET requests for the /login URL and displays the login page.
+     * This method handles GET requests for the /login URL and displays the login
+     * page.
+     * 
      * @return The name of the HTML template to render ("login.html").
      */
     @GetMapping("/login")

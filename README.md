@@ -1,199 +1,99 @@
+<div align="center">
+  
 # 🎓 Campus Event Booking System
+**A Next-Generation, Role-Based Facility Management & Approval Workflow Platform**
 
+[![Java](https://img.shields.io/badge/Java-25-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)](https://openjdk.org/)
+[![Spring Boot](https://img.shields.io/badge/Spring_Boot-3-6DB33F?style=for-the-badge&logo=spring-boot&logoColor=white)](https://spring.io/projects/spring-boot)
+[![Spring Security](https://img.shields.io/badge/Spring_Security-BCrypt-6DB33F?style=for-the-badge&logo=springsecurity&logoColor=white)](https://spring.io/projects/spring-security)
+[![MySQL 8.0](https://img.shields.io/badge/MySQL-8.0-4479A1?style=for-the-badge&logo=mysql&logoColor=white)](https://www.mysql.com/)
+[![Thymeleaf](https://img.shields.io/badge/Thymeleaf-HTML5-005C0F?style=for-the-badge&logo=thymeleaf&logoColor=white)](https://www.thymeleaf.org/)
+[![Maven](https://img.shields.io/badge/Maven-Build-C71A36?style=for-the-badge&logo=apachemaven&logoColor=white)](https://maven.apache.org/)
 
-
-![Java](https://img.shields.io/badge/Java-25-ED8B00?style=for-the-badge&logo=java&logoColor=white)
-
-![Spring Boot](https://img.shields.io/badge/Spring_Boot-3-6DB33F?style=for-the-badge&logo=spring-boot&logoColor=white)
-
-![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white)
-
-![Thymeleaf](https://img.shields.io/badge/Thymeleaf-%23005C0F.svg?style=for-the-badge&logo=Thymeleaf&logoColor=white)
-
-
-
-> A role-based web application designed to digitize and streamline the event booking and approval process on a college campus.
-
-
-
-## 📖 Introduction
-
-
-
-This project manages event bookings on a college campus by digitizing the entire process—from a student's initial request to the final approval from the Principal—through a clear, multi-level approval workflow. 
-
-
-
-The system is designed to provide a secure and efficient experience for different user roles, ensuring that each user only sees the information and actions relevant to their position and authority level.
-
-
+</div>
 
 ---
 
+## 🏛️ System Architecture & Workflow
 
+The Campus Event Booking System digitizes and enforces strict, multi-level bureaucratic approval chains essential for collegiate facility management. Through a highly secure, role-based access control (RBAC) architecture, moving a request from inception to execution requires targeted, sequential validation.
 
-## ✨ Core Features
+**The Sequential Approval Chain:**
+1. **Initiation:** Student submits a comprehensive booking request.
+2. **Level 1 (Staff Advisor):** Initial vetting of event scope and student conduct.
+3. **Level 2 (Head of Department - HOD):** Departmental approval and resource allocation check.
+4. **Level 3 (Dean):** Collegiate-level review for inter-departmental conflicts.
+5. **Level 4 (Principal):** The final executive sign-off.
 
-
-
-* **🔐 User Registration & Secure Login:** * Users can register for an account with a specific role (e.g., Student, Staff Advisor, HOD). 
-
-  * Passwords are securely hashed, and the login system is robustly managed by **Spring Security**.
-
-* **🎛️ Role-Based Dashboards:** * After logging in, users are automatically redirected to a dashboard tailored to their role.
-
-  * **Student Dashboard:** Students can submit new event booking requests and view the live status (Pending, Approved, Rejected) of their past submissions.
-
-  * **Approver Dashboards:** Each level of approver has a dedicated dashboard showing only the booking requests currently awaiting their specific approval.
-
-* **✅ Multi-Level Approval Workflow:** * A booking request submitted by a student must be approved sequentially through the chain of command: **Staff Advisor ➡️ HOD ➡️ Dean ➡️ Principal**.
-
-  * A rejection at any level stops the process immediately, while an approval moves the request to the next authority level.
-
-* **🎨 Dynamic Frontend:** * The user interface is built with Thymeleaf and styled with a modern dark theme, providing a clean, responsive, and user-friendly experience.
-
-
+Only requests that traverse this sequence successfully are granted finalized status, ensuring complete administrative oversight.
 
 ---
 
+## 🌟 Star Features
 
+Our platform brings enterprise-grade management capabilities to campus administration through several standout architectural decisions:
 
-## 🛠️ Technologies Used
+* 🎯 **Targeted Approver Routing**
+  Students don't just broadcast requests into the void. A dynamic dropdown allows them to securely select their specific Staff Advisor and HOD. The system then intelligently routes the request payload *only* to the authorized dashboards of the selected personnel, ensuring data privacy and preventing administrative overload.
 
+* 🔄 **The Reapplication Engine**
+  Rejections are no longer dead ends. If a request is declined (e.g., due to a scheduling clash), students can utilize the Reapplication Engine to edit and resubmit their proposal. These resurrected requests are flagged on approver dashboards with a critical **`REAPPLIED`** warning badge, preserving context and preventing redundant reviews.
 
+* 📚 **Historical Audit Trail**
+  To maintain strict institutional record-keeping, the system employs an intentionally redundant `approved_booking_history` table. Upon final executive approval or rigid cancellation, immutable data snapshots are generated. This architectural choice enables fast querying of historical events without impacting the performance of the active transactional booking pipeline.
 
-### Backend
-
-* **Java 25**
-
-* **Spring Boot 3:** Core framework for the application.
-
-* **Spring Security:** Handles authentication (login) and authorization (role-based access).
-
-* **Spring Data JPA (Hibernate):** Facilitates database communication and maps Java objects to database tables.
-
-
-
-### Database
-
-* **MySQL:** Relational database management system.
-
-
-
-### Frontend
-
-* **Thymeleaf:** Modern server-side Java template engine for creating dynamic HTML pages.
-
-* **HTML5 & CSS3:** For structuring and styling the web pages.
-
-
-
-### Build Tool
-
-* **Maven:** Manages project dependencies and application builds.
-
-
+* 🏢 **Dynamic Facility Selection**
+  Hardcoded venues are an anti-pattern. Registration and booking forms populate venue options dynamically from the source database, guaranteeing that users can only select currently active, valid facilities.
 
 ---
 
+## 🚀 Getting Started (Local Setup)
 
+Follow these steps to deploy the application on your local development machine.
 
-## 📂 Project Structure
-
-
-
-Here is a high-level overview of the application's architecture (Standard Spring Boot MVC):
-
-
-
-```text
-
-campus-booking/
-
-├── src/main/java/com/college/campusbooking/
-
-│   ├── controller/      # Handles HTTP requests and routes to views
-
-│   ├── model/           # Entity classes (Person, Booking, Facility)
-
-│   ├── repository/      # Spring Data JPA interfaces for DB operations
-
-│   ├── service/         # Business logic and transaction management
-
-│   ├── config/          # Spring Security and custom handlers
-
-│   └── WebApplication.java # Main execution class
-
-├── src/main/resources/
-
-│   ├── static/          # CSS, JavaScript, and Image files
-
-│   ├── templates/       # Thymeleaf HTML files (Dashboards, Forms, Login)
-
-│   └── application.properties # Database and server configuration
-
-└── pom.xml              # Maven dependencies
-
-```
-
-## 🚀 How to Run the Application
-
-
-
-Follow these steps to get the application running on your local machine:
-
-
-
-### 1. Database Setup
-
-Ensure you have a MySQL server running locally. Create a new, empty database named `campus_booking`:
-
-
+### 1. Database Initialization
+First, ensure you have MySQL 8.0 installed and running. Execute the following SQL to scaffold the target database:
 
 ```sql
-
-CREATE DATABASE campus_booking;
-
+CREATE DATABASE IF NOT EXISTS campusbookingdb;
+USE campusbookingdb;
 ```
 
-### 2. Configuration
-
-Open the src/main/resources/application.properties file and update your database credentials to match your `local MySQL setup`:
-
-
+### 2. Application Configuration
+Navigate to the `src/main/resources` directory and configure your `application.properties` with your localized database credentials:
 
 ```properties
+spring.datasource.url=jdbc:mysql://localhost:3306/campusbookingdb?useSSL=false&serverTimezone=UTC
+spring.datasource.username=root
+spring.datasource.password=YOUR_MYSQL_PASSWORD
 
-spring.datasource.username=your_mysql_username
-
-spring.datasource.password=your_mysql_password
-
+# Hibernate auto-ddl execution
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
 ```
 
-### 3. Run the Application
-
-You can run the application using your preferred `IDE` (by executing the main method in WebApplication.java), or by using the `terminal`.
-
-
-
-To run via `terminal`, navigate to the project's root directory and execute:
-
-
+### 3. Build & Run via Maven
+With the database ready and credentials configured, utilize Maven to build and spin up the Spring Boot application:
 
 ```bash
-
-./mvnw spring-boot:run
-
+mvn clean install
+mvn spring-boot:run
 ```
 
-### 4. Access the Web App
+**🔑 Default SuperUser Access:**
+Upon startup, the system is pre-configured with a master administrative payload for immediate testing:
+* **Username:** `root`
+* **Password:** `admin123`
 
-Once the application has started successfully, open your web browser and navigate to:
+---
 
+## 🛣️ Future Roadmap
 
+We are aggressively expanding the application's capabilities to establish it as the definitive standard for institutional facility management. Upcoming milestones include:
 
-```text
+* 📧 **JavaMailSender Integration:** Asynchronous, real-time email notifications detailing approval metrics and rejection rationales.
+* 📄 **PDF Entry Passes:** Automated generation of cryptographically verified PDF entry passes upon Principal approval.
+* 📊 **Chart.js Admin Analytics:** A visual telemetry dashboard for administrative insights (e.g., most requested venues, department load averages) securely integrated with the Historical Audit Trail.
 
-http://localhost:8080
-
-```
+---
+*Architected and engineered for excellence.*

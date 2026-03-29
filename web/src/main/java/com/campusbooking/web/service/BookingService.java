@@ -3,9 +3,11 @@ package com.campusbooking.web.service;
 import com.campusbooking.web.model.ApprovedBookingHistory;
 import com.campusbooking.web.model.Booking;
 import com.campusbooking.web.model.Status;
+import com.campusbooking.web.model.RejectedBooking;
 import com.campusbooking.web.repository.ApprovedBookingHistoryRepository;
 import com.campusbooking.web.repository.BookingRepository;
 import com.campusbooking.web.repository.PersonRepository;
+import com.campusbooking.web.repository.RejectedBookingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +15,7 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class BookingService {
@@ -26,12 +29,19 @@ public class BookingService {
     @Autowired
     private PersonRepository personRepository;
 
+    @Autowired
+    private RejectedBookingRepository rejectedBookingRepository;
+
     private static final Map<Status, Status> nextStatusMap = new EnumMap<>(Status.class);
     static {
         nextStatusMap.put(Status.PENDING_STAFF_APPROVAL, Status.PENDING_HOD_APPROVAL);
+        nextStatusMap.put(Status.PENDING_STAFF_APPROVAL_REAPPLIED, Status.PENDING_HOD_APPROVAL_REAPPLIED);
         nextStatusMap.put(Status.PENDING_HOD_APPROVAL, Status.PENDING_DEAN_APPROVAL);
+        nextStatusMap.put(Status.PENDING_HOD_APPROVAL_REAPPLIED, Status.PENDING_DEAN_APPROVAL_REAPPLIED);
         nextStatusMap.put(Status.PENDING_DEAN_APPROVAL, Status.PENDING_PRINCIPAL_APPROVAL);
+        nextStatusMap.put(Status.PENDING_DEAN_APPROVAL_REAPPLIED, Status.PENDING_PRINCIPAL_APPROVAL_REAPPLIED);
         nextStatusMap.put(Status.PENDING_PRINCIPAL_APPROVAL, Status.APPROVED);
+        nextStatusMap.put(Status.PENDING_PRINCIPAL_APPROVAL_REAPPLIED, Status.APPROVED);
     }
     
     public List<Booking> getAllBookings() {
@@ -48,12 +58,14 @@ public class BookingService {
             throw new IllegalArgumentException("The selected event date cannot be in the past.");
         }
         
-        if (booking.getFacility() != null && booking.getFacility().getName() != null) {
-            boolean isConflict = bookingRepository.existsByFacilityNameIgnoreCaseAndDateAndTimeSlotIgnoreCaseAndStatusNot(
-                    booking.getFacility().getName(),
+        if (booking.getFacility() != null && booking.getFacility().getId() != null) {
+            // Conflict check: exclude REJECTED bookings AND the booking's own ID (for reapplies)
+            boolean isConflict = bookingRepository.existsByFacilityIdAndDateAndTimeSlotIgnoreCaseAndStatusNotAndBookingIdNot(
+                    booking.getFacility().getId(),
                     booking.getDate(),
                     booking.getTimeSlot(),
-                    Status.REJECTED
+                    Status.REJECTED,
+                    booking.getBookingId() != null ? booking.getBookingId() : "__NONE__"
             );
             if (isConflict) {
                 throw new IllegalArgumentException("The selected facility is already booked for this date and time slot.");
@@ -68,6 +80,33 @@ public class BookingService {
         return bookingRepository.save(booking);
     }
 
+    /**
+     * Cancels a booking if it still belongs to the requesting user AND
+     * is still in a pending state (not yet approved or already rejected).
+     * Returns true if cancelled successfully, false if not authorised or wrong state.
+     */
+    public boolean cancelBooking(String bookingId, String requestingUsername) {
+        Optional<Booking> opt = bookingRepository.findById(bookingId);
+        if (opt.isEmpty()) return false;
+
+        Booking booking = opt.get();
+
+        // Only the owner student may cancel
+        if (!booking.getUser().getName().equals(requestingUsername)) return false;
+
+        // Only PENDING statuses can be cancelled (not already approved / rejected / reapplied in-flight)
+        Set<Status> cancellableStatuses = Set.of(
+            Status.PENDING_STAFF_APPROVAL,
+            Status.PENDING_STAFF_APPROVAL_REAPPLIED
+        );
+        if (!cancellableStatuses.contains(booking.getStatus())) return false;
+
+        // Use direct JPQL DELETE to avoid Hibernate cascade machinery
+        // (prevents cascade-deleting the referenced Facility when booking is removed)
+        bookingRepository.deleteByBookingIdDirect(booking.getBookingId());
+        return true;
+    }
+
     public Optional<Booking> processApproval(String bookingId, String approverRole, String approverName, boolean isApproved, String remark) {
         Optional<Booking> optionalBooking = bookingRepository.findById(bookingId);
         if (optionalBooking.isEmpty()) {
@@ -75,9 +114,8 @@ public class BookingService {
         }
         
         Booking booking = optionalBooking.get();
-        Status requiredStatus = getRequiredStatusForRole(approverRole);
         
-        if (booking.getStatus() != requiredStatus) {
+        if (!isValidStatusForRole(booking.getStatus(), approverRole)) {
             return Optional.empty();
         }
         
@@ -94,6 +132,16 @@ public class BookingService {
         booking.setRemarks(updatedRemarks.trim()); 
         
         bookingRepository.save(booking);
+
+        if (newStatus == Status.REJECTED) {
+            RejectedBooking rb = new RejectedBooking();
+            rb.setOriginalBookingId(booking.getBookingId());
+            rb.setRejectionReason(remark);
+            rb.setRejectedByRole(approverRole);
+            rb.setRejectedByName(approverName);
+            rb.setRejectedAt(java.time.LocalDateTime.now());
+            rejectedBookingRepository.save(rb);
+        }
 
         if (newStatus == Status.APPROVED) {
             ApprovedBookingHistory history = new ApprovedBookingHistory();
@@ -123,14 +171,75 @@ public class BookingService {
         return Optional.of(booking);
     }
 
-    private Status getRequiredStatusForRole(String role) {
+    private boolean isValidStatusForRole(Status status, String role) {
         return switch (role) {
-            case "Staff Advisor" -> Status.PENDING_STAFF_APPROVAL;
-            case "HOD" -> Status.PENDING_HOD_APPROVAL;
-            case "Dean" -> Status.PENDING_DEAN_APPROVAL;
-            case "Principal" -> Status.PENDING_PRINCIPAL_APPROVAL;
-            default -> null;
+            case "Staff Advisor" -> status == Status.PENDING_STAFF_APPROVAL || status == Status.PENDING_STAFF_APPROVAL_REAPPLIED;
+            case "HOD" -> status == Status.PENDING_HOD_APPROVAL || status == Status.PENDING_HOD_APPROVAL_REAPPLIED;
+            case "Dean" -> status == Status.PENDING_DEAN_APPROVAL || status == Status.PENDING_DEAN_APPROVAL_REAPPLIED;
+            case "Principal" -> status == Status.PENDING_PRINCIPAL_APPROVAL || status == Status.PENDING_PRINCIPAL_APPROVAL_REAPPLIED;
+            default -> false;
         };
+    }
+
+    /**
+     * Finds live bookings that this approver has already acted on.
+     * A booking is considered "processed" by an approver if its status
+     * has moved past the approver's level in the approval chain.
+     */
+    public List<Booking> findProcessedBookingsForApprover(Long approverId, String roleName) {
+        // Statuses that are PAST each approver's level (they've already acted)
+        Set<Status> pastStaffAdvisor = Set.of(
+                Status.PENDING_HOD_APPROVAL, Status.PENDING_HOD_APPROVAL_REAPPLIED,
+                Status.PENDING_DEAN_APPROVAL, Status.PENDING_DEAN_APPROVAL_REAPPLIED,
+                Status.PENDING_PRINCIPAL_APPROVAL, Status.PENDING_PRINCIPAL_APPROVAL_REAPPLIED,
+                Status.APPROVED, Status.REJECTED);
+
+        Set<Status> pastHOD = Set.of(
+                Status.PENDING_DEAN_APPROVAL, Status.PENDING_DEAN_APPROVAL_REAPPLIED,
+                Status.PENDING_PRINCIPAL_APPROVAL, Status.PENDING_PRINCIPAL_APPROVAL_REAPPLIED,
+                Status.APPROVED, Status.REJECTED);
+
+        Set<Status> pastDean = Set.of(
+                Status.PENDING_PRINCIPAL_APPROVAL, Status.PENDING_PRINCIPAL_APPROVAL_REAPPLIED,
+                Status.APPROVED, Status.REJECTED);
+
+        Set<Status> pastPrincipal = Set.of(
+                Status.APPROVED, Status.REJECTED);
+
+        List<Booking> results = new java.util.ArrayList<>();
+
+        switch (roleName) {
+            case "Staff Advisor" -> {
+                // Find bookings from students mapped to this staff advisor
+                // whose status has progressed past the staff advisor level
+                List<Booking> all = bookingRepository.findProcessedByStaffAdvisor(approverId);
+                results.addAll(all.stream()
+                        .filter(b -> pastStaffAdvisor.contains(b.getStatus()))
+                        .toList());
+            }
+            case "HOD" -> {
+                List<Booking> all = bookingRepository.findProcessedByHOD(approverId);
+                results.addAll(all.stream()
+                        .filter(b -> pastHOD.contains(b.getStatus()))
+                        .toList());
+            }
+            case "Dean" -> {
+                // Dean sees all bookings past dean level
+                List<Booking> all = bookingRepository.findAll();
+                results.addAll(all.stream()
+                        .filter(b -> pastDean.contains(b.getStatus()))
+                        .toList());
+            }
+            case "Principal" -> {
+                // Principal sees all bookings past principal level
+                List<Booking> all = bookingRepository.findAll();
+                results.addAll(all.stream()
+                        .filter(b -> pastPrincipal.contains(b.getStatus()))
+                        .toList());
+            }
+        }
+
+        return results;
     }
 }
 

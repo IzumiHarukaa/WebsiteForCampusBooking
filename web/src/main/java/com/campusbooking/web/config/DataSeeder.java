@@ -12,8 +12,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 /**
- * Automatically creates default staff users when the application starts if they don't already exist.
- * This is the secure alternative to allowing manual registration of these privileged roles.
+ * Automatically creates default staff users when the application starts if they
+ * don't already exist.
+ * This is the secure alternative to allowing manual registration of these
+ * privileged roles.
  */
 @Component
 public class DataSeeder implements CommandLineRunner {
@@ -51,12 +53,12 @@ public class DataSeeder implements CommandLineRunner {
                 default:
                     return; // Ignore unknown roles
             }
-            
+
             staffMember.setName(username);
             staffMember.setPassword(passwordEncoder.encode(rawPassword));
             staffMember.setRole(role);
             personRepository.save(staffMember);
-            
+
             System.out.println("Seeded default user: " + username + " with role: " + role);
         }
     }
