@@ -96,4 +96,8 @@ We are aggressively expanding the application's capabilities to establish it as 
 * 📊 **Chart.js Admin Analytics:** A visual telemetry dashboard for administrative insights (e.g., most requested venues, department load averages) securely integrated with the Historical Audit Trail.
 
 ---
+## Team:
+* Sreedhar Raj Kannal
+* Sivapriyan R S
+* Karthik Nair
 *Architected and engineered for excellence.*
