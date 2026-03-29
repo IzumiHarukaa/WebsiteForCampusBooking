@@ -94,4 +94,5 @@ We are aggressively expanding the application's capabilities to establish it as 
 * Sreedhar Raj Kannal
 * Sivapriyan R S
 * Karthik Nair
+---
 *Architected and engineered for excellence.*
