@@ -80,12 +80,6 @@ mvn clean install
 mvn spring-boot:run
 ```
 
-**🔑 Default SuperUser Access:**
-Upon startup, the system is pre-configured with a master administrative payload for immediate testing:
-* **Username:** `root`
-* **Password:** `admin123`
-
----
 
 ## 🛣️ Future Roadmap
 
