@@ -81,6 +81,52 @@ mvn spring-boot:run
 ```
 
 
+
+## 📂 Project Structure
+
+
+
+Here is a high-level overview of the application's architecture (Standard Spring Boot MVC):
+
+
+
+```text
+
+web/
+├── pom.xml                                   # Maven dependencies configuration
+├── src/main/java/com/campusbooking/web/
+│   ├── WebApplication.java                   # Main Spring Boot entry point
+│   ├── actor/                                # User entity models (Single Table Inheritance)
+│   │   ├── Person.java                       # Base abstract class for all users
+│   │   ├── User.java                         # Student implementation
+│   │   ├── Approver.java / Dean.java etc.    # Approver role implementations
+│   ├── config/                               # Settings and Security
+│   │   ├── WebSecurityConfig.java            # Spring Security setup
+│   │   ├── RoleBasedAuthenticationSuccessHandler.java # Route users to role dashboards
+│   │   ├── DataSeeder.java                   # Initializes mock data / default roles
+│   ├── controller/                           # Web endpoints and routing
+│   │   ├── BookingController.java            # Main logic for creating, processing, canceling bookings
+│   │   ├── RegistrationController.java       # Handles sign-ups with specific access secrets
+│   │   ├── DashboardController.java          # Handles rendering of HTML pages assigned to roles
+│   ├── model/                                # Core Domain Objects (JPA Entities)
+│   │   ├── Booking.java                      # Central booking entity
+│   │   ├── Facility.java                     # Master list of venues
+│   │   ├── Status.java                       # Enum tracking approval pipeline
+│   │   ├── StudentApproverMapping.java       # Relates a Student to a specific Staff Advisor / HOD
+│   ├── repository/                           # Spring Data JPA Repository Interfaces
+│   ├── service/                              # Core Business Logic
+│   │   └── BookingService.java               # Booking creation, conflict checks, and state transitions
+├── src/main/resources/
+│   ├── application.properties                # Spring boot configurations (DB, secrets, pagination)
+│   ├── static/                               # Static web assets 
+│   │   └── style.css                         # Global vanilla CSS
+│   └── templates/                            # Thymeleaf HTML Views
+│       ├── login.html / register.html        # Authentication UI
+│       ├── student-dashboard.html            # Main student interface
+│       ├── [role]-dashboard.html             # Interfaces for Staff Advisor, HOD, Dean, Principal
+│       ├── booking-form.html                 # Booking creation/edit form
+
+```
 ## 🛣️ Future Roadmap
 
 We are aggressively expanding the application's capabilities to establish it as the definitive standard for institutional facility management. Upcoming milestones include:
