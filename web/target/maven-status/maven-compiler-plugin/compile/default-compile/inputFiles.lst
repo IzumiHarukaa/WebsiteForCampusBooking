@@ -5,6 +5,7 @@ D:\GIt repos\WebsiteForCampusBooking\web\src\main\java\com\campusbooking\web\act
 D:\GIt repos\WebsiteForCampusBooking\web\src\main\java\com\campusbooking\web\actor\Principal.java
 D:\GIt repos\WebsiteForCampusBooking\web\src\main\java\com\campusbooking\web\actor\StaffAdvisor.java
 D:\GIt repos\WebsiteForCampusBooking\web\src\main\java\com\campusbooking\web\actor\User.java
+D:\GIt repos\WebsiteForCampusBooking\web\src\main\java\com\campusbooking\web\config\DatabaseFixRunner.java
 D:\GIt repos\WebsiteForCampusBooking\web\src\main\java\com\campusbooking\web\config\DataSeeder.java
 D:\GIt repos\WebsiteForCampusBooking\web\src\main\java\com\campusbooking\web\config\RoleBasedAuthenticationSuccessHandler.java
 D:\GIt repos\WebsiteForCampusBooking\web\src\main\java\com\campusbooking\web\config\UserDetailsServiceImpl.java
@@ -18,9 +19,14 @@ D:\GIt repos\WebsiteForCampusBooking\web\src\main\java\com\campusbooking\web\con
 D:\GIt repos\WebsiteForCampusBooking\web\src\main\java\com\campusbooking\web\model\ApprovedBookingHistory.java
 D:\GIt repos\WebsiteForCampusBooking\web\src\main\java\com\campusbooking\web\model\Booking.java
 D:\GIt repos\WebsiteForCampusBooking\web\src\main\java\com\campusbooking\web\model\Facility.java
+D:\GIt repos\WebsiteForCampusBooking\web\src\main\java\com\campusbooking\web\model\RejectedBooking.java
 D:\GIt repos\WebsiteForCampusBooking\web\src\main\java\com\campusbooking\web\model\Status.java
+D:\GIt repos\WebsiteForCampusBooking\web\src\main\java\com\campusbooking\web\model\StudentApproverMapping.java
 D:\GIt repos\WebsiteForCampusBooking\web\src\main\java\com\campusbooking\web\repository\ApprovedBookingHistoryRepository.java
 D:\GIt repos\WebsiteForCampusBooking\web\src\main\java\com\campusbooking\web\repository\BookingRepository.java
+D:\GIt repos\WebsiteForCampusBooking\web\src\main\java\com\campusbooking\web\repository\FacilityRepository.java
 D:\GIt repos\WebsiteForCampusBooking\web\src\main\java\com\campusbooking\web\repository\PersonRepository.java
+D:\GIt repos\WebsiteForCampusBooking\web\src\main\java\com\campusbooking\web\repository\RejectedBookingRepository.java
+D:\GIt repos\WebsiteForCampusBooking\web\src\main\java\com\campusbooking\web\repository\StudentApproverMappingRepository.java
 D:\GIt repos\WebsiteForCampusBooking\web\src\main\java\com\campusbooking\web\service\BookingService.java
 D:\GIt repos\WebsiteForCampusBooking\web\src\main\java\com\campusbooking\web\WebApplication.java

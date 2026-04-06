@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="View historical approved booking requests">
-    <title>Booking Approval History</title>
+    <title>Booking History</title>
     <link rel="stylesheet" type="text/css" th:href="@{/style.css}" />
 </head>
 <body>
@@ -16,8 +16,11 @@
             </span>
             <div style="display: flex; gap: 1rem; align-items: center;">
                 <span class="status-badge status-approved">History Log</span>
-                <span style="color: var(--text-secondary); font-size: 0.9rem;">Approver, <strong th:text="${username}" style="color: #fff;">User</strong></span>
-                <a th:href="@{/}" class="btn btn-secondary" style="padding: 0.4rem 0.8rem; text-decoration: none;">Dashboard</a>
+                <span style="color: var(--text-secondary); font-size: 0.9rem;">
+                    <span th:text="${role}" style="color: var(--text-secondary);">Role</span>,
+                    <strong th:text="${username}" style="color: #fff;">User</strong>
+                </span>
+                <a th:href="@{/approver/dashboard}" class="btn btn-secondary" style="padding: 0.4rem 0.8rem; text-decoration: none;">Dashboard</a>
                 <form th:action="@{/logout}" method="post" style="margin: 0;">
                     <button type="submit" class="btn btn-secondary" style="padding: 0.4rem 0.8rem;">Logout</button>
                 </form>
@@ -26,14 +29,71 @@
     </header>
 
     <main class="container">
+        <!-- SECTION 1: Live Booking Status Tracker -->
         <div class="flex-container">
             <div>
-                <h1>Approval History</h1>
-                <p style="color: var(--text-secondary);">Historical snapshots of all bookings you have finalized.</p>
+                <h1>Live Booking Status</h1>
+                <p style="color: var(--text-secondary);">Current status of all bookings you have processed.</p>
             </div>
         </div>
         
-        <div class="card" style="padding: 1.5rem;">
+        <div class="card" style="padding: 1.5rem; margin-bottom: 2rem;">
+            <div class="table-responsive">
+                <table class="styled-table">
+                    <thead>
+                        <tr>
+                            <th>Booking ID</th>
+                            <th>Event</th>
+                            <th>Applicant</th>
+                            <th>Facility</th>
+                            <th>Event Date</th>
+                            <th>Time Slot</th>
+                            <th>Current Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="booking : ${processedBookings}">
+                            <td th:text="${booking.bookingId}" style="font-weight: 500; color: var(--accent-color);"></td>
+                            <td>
+                                <div style="font-weight: 500;" th:text="${booking.eventName}"></div>
+                                <div style="font-size: 0.8rem; color: var(--text-secondary);" th:text="${booking.eventDescription}"></div>
+                            </td>
+                            <td th:text="${booking.user?.name}"></td>
+                            <td th:text="${booking.facility?.name}"></td>
+                            <td th:text="${booking.date != null ? #temporals.format(booking.date, 'dd/MM/yy') : 'N/A'}"></td>
+                            <td th:text="${booking.timeSlot}"></td>
+                            <td>
+                                <!-- Status badge with dynamic color -->
+                                <span class="status-badge"
+                                      th:text="${booking.status.name().replace('_', ' ')}"
+                                      th:style="${booking.status.name() == 'APPROVED'
+                                          ? 'background-color: rgba(63, 185, 80, 0.15); color: #3fb950; border-color: rgba(63, 185, 80, 0.3);'
+                                          : booking.status.name() == 'REJECTED'
+                                          ? 'background-color: rgba(248, 81, 73, 0.15); color: #f85149; border-color: rgba(248, 81, 73, 0.3);'
+                                          : 'background-color: rgba(210, 153, 34, 0.15); color: #d29922; border-color: rgba(210, 153, 34, 0.3);'}">
+                                </span>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(processedBookings)}">
+                            <td colspan="7" style="text-align: center; padding: 4rem; color: var(--text-secondary);">
+                                <div style="font-size: 2.5rem; margin-bottom: 1rem; opacity: 0.3;">📋</div>
+                                No bookings have been processed yet.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- SECTION 2: Immutable Audit Trail (Principal only) -->
+        <div th:if="${role == 'Principal'}" class="flex-container">
+            <div>
+                <h1>Approval Audit Trail</h1>
+                <p style="color: var(--text-secondary);">Immutable snapshots of all bookings finalized with your approval.</p>
+            </div>
+        </div>
+        
+        <div th:if="${role == 'Principal'}" class="card" style="padding: 1.5rem;">
             <div class="table-responsive">
                 <table class="styled-table">
                     <thead>
@@ -63,7 +123,7 @@
                         <tr th:if="${#lists.isEmpty(historyList)}">
                             <td colspan="7" style="text-align: center; padding: 4rem; color: var(--text-secondary);">
                                 <div style="font-size: 2.5rem; margin-bottom: 1rem; opacity: 0.3;">🗄️</div>
-                                You have not finalized any approvals yet.
+                                No finalized approval snapshots yet.
                             </td>
                         </tr>
                     </tbody>

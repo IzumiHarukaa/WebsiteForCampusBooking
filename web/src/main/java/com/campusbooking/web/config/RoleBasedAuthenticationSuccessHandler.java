@@ -13,8 +13,10 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 
 /**
- * A custom success handler that directs users to different pages based on their role after a successful login.
- * This class is a Spring Component, so it can be automatically discovered and used by the security configuration.
+ * A custom success handler that directs users to different pages based on their
+ * role after a successful login.
+ * This class is a Spring Component, so it can be automatically discovered and
+ * used by the security configuration.
  */
 @Component
 public class RoleBasedAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
@@ -24,9 +26,10 @@ public class RoleBasedAuthenticationSuccessHandler implements AuthenticationSucc
     private BookingRepository bookingRepository;
 
     @Override
-    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
+            Authentication authentication) throws IOException, ServletException {
         // Set a default URL in case no specific role logic matches.
-        String redirectUrl = "/"; 
+        String redirectUrl = "/";
 
         // Get the first role (authority) of the logged-in user.
         GrantedAuthority authority = authentication.getAuthorities().stream().findFirst().orElse(null);
@@ -42,26 +45,30 @@ public class RoleBasedAuthenticationSuccessHandler implements AuthenticationSucc
                 break;
             case "ROLE_STAFF_ADVISOR":
                 // Check if there are any bookings with the status PENDING_STAFF_APPROVAL.
-                // If the list is empty, redirect to the "no requests" page; otherwise, go to the dashboard.
+                // If the list is empty, redirect to the "no requests" page; otherwise, go to
+                // the dashboard.
                 redirectUrl = bookingRepository.findByStatus(Status.PENDING_STAFF_APPROVAL).isEmpty()
-                    ? "/no-pending-requests" : "/staff-advisor/dashboard";
+                        ? "/no-pending-requests"
+                        : "/staff-advisor/dashboard";
                 break;
             case "ROLE_HOD":
                 redirectUrl = bookingRepository.findByStatus(Status.PENDING_HOD_APPROVAL).isEmpty()
-                    ? "/no-pending-requests" : "/hod/dashboard";
+                        ? "/no-pending-requests"
+                        : "/hod/dashboard";
                 break;
             case "ROLE_DEAN":
                 redirectUrl = bookingRepository.findByStatus(Status.PENDING_DEAN_APPROVAL).isEmpty()
-                    ? "/no-pending-requests" : "/dean/dashboard";
+                        ? "/no-pending-requests"
+                        : "/dean/dashboard";
                 break;
             case "ROLE_PRINCIPAL":
-                 redirectUrl = bookingRepository.findByStatus(Status.PENDING_PRINCIPAL_APPROVAL).isEmpty()
-                    ? "/no-pending-requests" : "/principal/dashboard";
+                redirectUrl = bookingRepository.findByStatus(Status.PENDING_PRINCIPAL_APPROVAL).isEmpty()
+                        ? "/no-pending-requests"
+                        : "/principal/dashboard";
                 break;
         }
-        
+
         // Perform the redirect to the determined URL.
         response.sendRedirect(redirectUrl);
     }
 }
-

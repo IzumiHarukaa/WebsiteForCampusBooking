@@ -50,7 +50,10 @@
                     <tbody>
                         <tr th:each="booking : ${bookings}">
                             <td th:text="${booking.bookingId}" style="font-weight: 500; color: var(--accent-color);"></td>
-                            <td th:text="${booking.eventName}"></td>
+                            <td>
+                                <span th:text="${booking.eventName}"></span>
+                                <span th:if="${#strings.contains(booking.status.name(), 'REAPPLIED')}" class="status-badge" style="background-color: #ff9800; color: #fff; padding: 0.15rem 0.4rem; font-size: 0.65rem; margin-left: 0.5rem; border: none; box-shadow: none;">Reapplied</span>
+                            </td>
                             <td th:text="${booking.eventDescription}" style="font-size: 0.9rem;"></td>
                             <td th:text="${booking.user?.name}"></td>
                             <td th:text="${booking.facility?.name}"></td>
@@ -72,6 +75,19 @@
                     </tbody>
                 </table>
             </div>
+        </div>
+
+        <!-- Pagination Controls -->
+        <div th:if="${totalPages > 1}" style="display: flex; justify-content: center; gap: 0.5rem; margin-top: 1.5rem; align-items: center;">
+            <a th:href="${#request.requestURI + '?page=' + (currentPage - 1)}"
+               class="btn btn-secondary" style="padding: 0.4rem 0.75rem;"
+               th:if="${currentPage > 0}">&#8592; Prev</a>
+            <span style="color: var(--text-secondary); padding: 0.4rem 0.75rem;">
+                Page <strong th:text="${currentPage + 1}"></strong> of <strong th:text="${totalPages}"></strong>
+            </span>
+            <a th:href="${#request.requestURI + '?page=' + (currentPage + 1)}"
+               class="btn btn-secondary" style="padding: 0.4rem 0.75rem;"
+               th:if="${currentPage + 1 < totalPages}">Next &#8594;</a>
         </div>
     </main>
     <footer class="copyright-footer">

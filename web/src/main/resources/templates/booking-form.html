@@ -24,7 +24,7 @@
             <h1>New Event Application</h1>
             <p style="color: var(--text-secondary); margin-bottom: 2rem;">Please fill out the details for your event request. All fields are required unless specified.</p>
 
-            <form th:action="@{/bookings}" th:object="${booking}" method="post">
+            <form th:action="${booking.status != null and booking.status.name() == 'REJECTED'} ? @{/bookings/{id}/reapply(id=${booking.bookingId})} : @{/bookings}" th:object="${booking}" method="post">
 
                 <div th:if="${param.error}" class="alert alert-danger" style="margin-bottom: 1.5rem;">
                     <span th:text="${param.error}">Error message</span>
@@ -35,9 +35,13 @@
                 </div>
 
                 <div class="form-grid">
-                    <div class="form-group">
+                    <div class="form-group" th:if="${booking.status == null or booking.status.name() != 'REJECTED'}">
                         <label for="bookingId">Booking ID</label>
                         <input type="text" th:field="*{bookingId}" placeholder="e.g., EVT-CSE-01" class="form-control" required/>
+                    </div>
+                    <div class="form-group" th:if="${booking.status != null and booking.status.name() == 'REJECTED'}">
+                        <label for="bookingId">Booking ID (Read-only)</label>
+                        <input type="text" th:field="*{bookingId}" class="form-control" readonly style="background: rgba(255,255,255,0.05);"/>
                     </div>
                     <div class="form-group">
                         <label for="eventName">Event Name</label>
@@ -52,12 +56,39 @@
                         <input type="text" th:field="*{timeSlot}" placeholder="e.g., 14:00 - 16:00" class="form-control" required/>
                     </div>
                     <div class="form-group">
-                        <label for="facility.name">Venue / Facility</label>
-                        <input type="text" th:field="*{facility.name}" placeholder="e.g., Main Auditorium" class="form-control" required/>
+                        <label for="facility">Venue / Facility</label>
+                        <select th:field="*{facility.id}" class="form-control" required>
+                            <option value="">-- Select a Facility --</option>
+                            <option th:each="fac : ${facilities}" 
+                                    th:value="${fac.id}" 
+                                    th:text="${fac.name + (fac.type != null ? ' (' + fac.type + ')' : '')}">
+                            </option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-grid" style="margin-top: 1.5rem;">
+                    <div class="form-group">
+                        <label for="staffAdvisorId">Select Staff Advisor (First Approver)</label>
+                        <select name="staffAdvisorId" class="form-control" required>
+                            <option value="">-- Select Staff Advisor --</option>
+                            <option th:each="advisor : ${staffAdvisors}" 
+                                    th:value="${advisor.id}" 
+                                    th:text="${advisor.name}"
+                                    th:selected="${selectedStaffAdvisorId == advisor.id}">
+                            </option>
+                        </select>
                     </div>
                     <div class="form-group">
-                        <label for="facility.type">Facility Type <span style="opacity: 0.5;">(optional)</span></label>
-                        <input type="text" th:field="*{facility.type}" placeholder="e.g., Auditorium, Lab, Hall" class="form-control"/>
+                        <label for="hodId">Select HOD (Second Approver)</label>
+                        <select name="hodId" class="form-control" required>
+                            <option value="">-- Select HOD --</option>
+                            <option th:each="hod : ${hods}" 
+                                    th:value="${hod.id}" 
+                                    th:text="${hod.name}"
+                                    th:selected="${selectedHodId == hod.id}">
+                            </option>
+                        </select>
                     </div>
                 </div>
 

@@ -34,10 +34,11 @@ public class Booking {
 
     /**
      * Establishes a many-to-one relationship with the Facility entity.
-     * CascadeType.ALL ensures that if a new facility is created with a booking,
-     * it gets saved to the database automatically.
+     * CascadeType.PERSIST and MERGE allow a new/updated facility to be saved automatically
+     * when a booking is saved. CascadeType.REMOVE is intentionally excluded to prevent
+     * accidentally deleting a facility when a booking is cancelled.
      */
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "facility_id")
     private Facility facility;
 
@@ -53,6 +54,7 @@ public class Booking {
 
     // Stores the enum value as a string (e.g., "PENDING_STAFF_APPROVAL") in the database.
     @Enumerated(EnumType.STRING)
+    @jakarta.persistence.Column(columnDefinition = "VARCHAR(255)")
     private Status status;
 
     private String remarks;

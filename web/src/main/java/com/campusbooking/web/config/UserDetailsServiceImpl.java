@@ -21,11 +21,10 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Person person = personRepository.findByName(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
-        
+
         return new User(
-            person.getName(),
-            person.getPassword(),
-            Collections.singletonList(new SimpleGrantedAuthority(person.getRole()))
-        );
+                person.getName(),
+                person.getPassword(),
+                Collections.singletonList(new SimpleGrantedAuthority(person.getRole())));
     }
 }
