@@ -127,6 +127,18 @@ web/
 │       ├── booking-form.html                 # Booking creation/edit form
 
 ```
+
+## Tables
+### person
+```sql
+CREATE TABLE person (
+    dtype VARCHAR(31) NOT NULL,
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    role VARCHAR(255) NOT NULL
+);
+```
 ## 🛣️ Future Roadmap
 
 We are aggressively expanding the application's capabilities to establish it as the definitive standard for institutional facility management. Upcoming milestones include:
