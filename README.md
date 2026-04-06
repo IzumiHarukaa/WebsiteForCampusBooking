@@ -128,7 +128,7 @@ web/
 
 ```
 
-## Tables
+## Tables in the DataBase
 ### person
 ```sql
 CREATE TABLE person (
