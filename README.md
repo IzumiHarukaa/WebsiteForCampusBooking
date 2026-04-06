@@ -139,6 +139,95 @@ CREATE TABLE person (
     role VARCHAR(255) NOT NULL
 );
 ```
+### facility
+```sql
+CREATE TABLE facility (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255),
+    type VARCHAR(255)
+);
+```
+### bookings
+```sql
+CREATE TABLE bookings (
+    booking_id VARCHAR(255) PRIMARY KEY,
+    date DATE,
+    event_description VARCHAR(255),
+    event_name VARCHAR(255),
+    pa_system_required BIT(1),
+    remarks VARCHAR(255),
+    status ENUM('APPROVED','PENDING_DEAN_APPROVAL','PENDING_HOD_APPROVAL','PENDING_PRINCIPAL_APPROVAL','PENDING_STAFF_APPROVAL','PENDING_STAFF_APPROVAL_REAPPLIED','REJECTED'),
+    time_slot VARCHAR(255),
+    assigned_hod_id BIGINT,
+    assigned_staff_advisor_id BIGINT,
+    facility_id BIGINT,
+    user_id BIGINT NOT NULL,
+    CONSTRAINT fk_booking_hod FOREIGN KEY (assigned_hod_id) REFERENCES person(id),
+    CONSTRAINT fk_booking_staff FOREIGN KEY (assigned_staff_advisor_id) REFERENCES person(id),
+    CONSTRAINT fk_booking_facility FOREIGN KEY (facility_id) REFERENCES facility(id),
+    CONSTRAINT fk_booking_user FOREIGN KEY (user_id) REFERENCES person(id)
+);
+```
+### student_approver_mapping
+```sql
+CREATE TABLE student_approver_mapping (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    student_id BIGINT,
+    staff_advisor_id BIGINT,
+    hod_id BIGINT,
+    CONSTRAINT fk_map_student FOREIGN KEY (student_id) REFERENCES person(id) ON DELETE CASCADE,
+    CONSTRAINT fk_map_staff FOREIGN KEY (staff_advisor_id) REFERENCES person(id) ON DELETE CASCADE,
+    CONSTRAINT fk_map_hod FOREIGN KEY (hod_id) REFERENCES person(id) ON DELETE CASCADE
+);
+```
+### approved_booking_history
+```sql
+CREATE TABLE approved_booking_history (
+    history_id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    original_booking_id VARCHAR(255),
+    user_id BIGINT,
+    facility_id BIGINT,
+    approver_id BIGINT,
+    user_name VARCHAR(255),
+    facility_name VARCHAR(255),
+    approver_name VARCHAR(255),
+    event_name VARCHAR(255),
+    event_description VARCHAR(255),
+    date DATE,
+    time_slot VARCHAR(255),
+    pa_system_required BIT(1),
+    remarks VARCHAR(255),
+    approval_timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_history_original_booking FOREIGN KEY (original_booking_id) REFERENCES bookings(booking_id) ON DELETE SET NULL,
+    CONSTRAINT fk_history_user FOREIGN KEY (user_id) REFERENCES person(id) ON DELETE SET NULL,
+    CONSTRAINT fk_history_facility FOREIGN KEY (facility_id) REFERENCES facility(id) ON DELETE SET NULL,
+    CONSTRAINT fk_history_approver FOREIGN KEY (approver_id) REFERENCES person(id) ON DELETE SET NULL
+);
+```
+### rejected_bookings
+```sql
+CREATE TABLE rejected_bookings (
+    history_id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    original_booking_id VARCHAR(255),
+    user_id BIGINT,
+    facility_id BIGINT,
+    approver_id BIGINT,
+    user_name VARCHAR(255),
+    facility_name VARCHAR(255),
+    approver_name VARCHAR(255),
+    event_name VARCHAR(255),
+    event_description VARCHAR(255),
+    date DATE,
+    time_slot VARCHAR(255),
+    pa_system_required BIT(1),
+    remarks VARCHAR(255),
+    rejection_timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_rejected_original_booking FOREIGN KEY (original_booking_id) REFERENCES bookings(booking_id) ON DELETE SET NULL,
+    CONSTRAINT fk_rejected_user FOREIGN KEY (user_id) REFERENCES person(id) ON DELETE SET NULL,
+    CONSTRAINT fk_rejected_facility FOREIGN KEY (facility_id) REFERENCES facility(id) ON DELETE SET NULL,
+    CONSTRAINT fk_rejected_approver FOREIGN KEY (approver_id) REFERENCES person(id) ON DELETE SET NULL
+);
+```
 ## 🛣️ Future Roadmap
 
 We are aggressively expanding the application's capabilities to establish it as the definitive standard for institutional facility management. Upcoming milestones include:
